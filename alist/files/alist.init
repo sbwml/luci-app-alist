@@ -1,0 +1,36 @@
+#!/bin/sh /etc/rc.common
+
+START=99
+USE_PROCD=1
+PROG=/usr/bin/alist
+CONFIG=/etc/alist/config.json
+
+get_config() {
+	config_get_bool enabled $1 enabled 1
+	config_get port $1 port 5244
+	config_get expiration $1 expiration 60
+	config_get cleanup_interval $1 cleanup_interval 120
+}
+
+start_service() {
+	config_load alist
+	config_foreach get_config alist
+	[ $enabled != 1 ] && return 1
+	cat > $CONFIG <<EOF
+{"address":"0.0.0.0","port":$port,"assets":"","database":{"type":"sqlite3","user":"","password":"","host":"","port":0,"name":"","table_prefix":"x_","db_file":"/etc/alist/data.db","ssl_mode":"disable"},"scheme":{"https":false,"cert_file":"","key_file":""},"cache":{"expiration":$expiration,"cleanup_interval":$cleanup_interval}}
+EOF
+	procd_open_instance
+	procd_set_param command $PROG
+	procd_append_param command --conf $CONFIG
+	procd_set_param respawn
+	procd_close_instance
+}
+
+service_triggers() {
+	procd_add_reload_trigger "alist"
+}
+
+reload_service() {
+	stop
+	start
+}

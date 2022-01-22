@@ -1,0 +1,22 @@
+#!/bin/sh
+
+uci -q batch <<-EOF >/dev/null
+	delete ucitrack.@alist[-1]
+	add ucitrack alist
+	set ucitrack.@alist[-1].init=alist
+	commit ucitrack
+
+	delete firewall.alist
+	set firewall.alist=rule
+	set firewall.alist.name="alist"
+	set firewall.alist.target="ACCEPT"
+	set firewall.alist.src="wan"
+	set firewall.alist.proto="tcp"
+	set firewall.alist.dest_port="5244"
+	commit firewall
+EOF
+
+/etc/init.d/alist enable
+/etc/init.d/alist start
+
+exit 0
