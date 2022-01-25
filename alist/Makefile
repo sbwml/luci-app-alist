@@ -52,7 +52,7 @@ endef
 define Package/$(PKG_NAME)/config
 config ALIST_COMPRESS_UPX
 	bool "Compress executable files with UPX"
-	default y
+	default n
 endef
 
 define Package/$(PKG_NAME)/conffiles

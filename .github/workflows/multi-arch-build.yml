@@ -1,0 +1,79 @@
+name: Build
+
+on:
+  release:
+    types:
+      - published
+
+jobs:
+  build:
+    name: Build ${{ matrix.arch }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: aarch64_cortex-a53
+            target: mvebu-cortexa53
+
+          - arch: aarch64_cortex-a72
+            target: mvebu-cortexa72
+
+          - arch: aarch64_generic
+            target: rockchip-armv8
+
+          - arch: arm_cortex-a7_neon-vfpv4
+            target: ipq40xx-generic
+
+          - arch: arm_cortex-a9_vfpv3-d16
+            target: mvebu-cortexa9
+
+          - arch: arm_cortex-a15_neon-vfpv4
+            target: armvirt-32
+
+          - arch: i386_pentium4
+            target: x86-generic
+
+          - arch: i386_pentium-mmx
+            target: x86-geode
+
+          - arch: mips_24kc
+            target: ath79-generic
+
+          - arch: mipsel_24kc
+            target: mt7621
+
+          - arch: x86_64
+            target: x86-64
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Build
+        uses: openwrt/gh-action-sdk@v3
+        env:
+          ARCH: ${{ matrix.arch }}-master
+          FEEDNAME: packages_ci
+          PACKAGES: alist luci-app-alist
+
+      - name: Move created packages to project dir
+        run: cp bin/packages/${{ matrix.arch }}/packages_ci/*.ipk . || true
+
+      - name: Store packages
+        uses: actions/upload-artifact@v2
+        if: github.event_name != 'release'
+        with:
+          name: ${{ matrix.arch}}-${{ github.sha}}-packages
+          path: "*.ipk"
+
+      - name: Upload packages
+        uses: svenstaro/upload-release-action@v2
+        if: github.event_name == 'release'
+        with:
+          repo_token: ${{ secrets.workflow_token }}
+          file: "*.ipk"
+          tag: ${{ github.ref }}
+          overwrite: true
+          file_glob: true
