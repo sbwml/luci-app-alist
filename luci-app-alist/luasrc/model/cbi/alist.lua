@@ -17,5 +17,6 @@ s.anonymous=true
 
 s:option(Value, "expiration", translate("Cache invalidation time (unit: minutes)")).rmempty=false
 s:option(Value, "cleanup_interval", translate("Clear the invalidation cache interval")).rmempty=false
+s:option(Value, "temp_dir", translate("Temp directory")).rmempty=false
 
 return m
