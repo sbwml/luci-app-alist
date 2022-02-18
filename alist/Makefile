@@ -93,6 +93,7 @@ define Package/$(PKG_NAME)/install
 	$(INSTALL_CONF) ./files/alist.config $(1)/etc/config/alist
 	$(INSTALL_BIN) ./files/alist.init $(1)/etc/init.d/alist
 	$(INSTALL_BIN) ./files/alist.uci-default $(1)/etc/uci-defaults/alist
+	$(INSTALL_CONF) ./files/data.db $(1)/etc/alist/data.db
 endef
 
 $(eval $(call GoBinPackage,$(PKG_NAME)))
