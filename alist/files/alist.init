@@ -19,7 +19,7 @@ start_service() {
 	[ $enabled != 1 ] && return 1
 	mkdir -p $temp_dir
 	cat > $CONFIG <<EOF
-{"address":"0.0.0.0","port":$port,"assets":"","database":{"type":"sqlite3","user":"","password":"","host":"","port":0,"name":"","table_prefix":"x_","db_file":"/etc/alist/data.db","ssl_mode":"disable"},"scheme":{"https":false,"cert_file":"","key_file":""},"cache":{"expiration":$expiration,"cleanup_interval":$cleanup_interval},"temp_dir":"$temp_dir"}
+{"address":"0.0.0.0","port":$port,"assets":"/","database":{"type":"sqlite3","user":"","password":"","host":"","port":0,"name":"","table_prefix":"x_","db_file":"/etc/alist/data.db","ssl_mode":"disable"},"scheme":{"https":false,"cert_file":"","key_file":""},"cache":{"expiration":$expiration,"cleanup_interval":$cleanup_interval},"temp_dir":"$temp_dir"}
 EOF
 	procd_open_instance
 	procd_set_param command $PROG
