@@ -7,8 +7,7 @@
 			{
 				if (st.running)
 				{
-					tb.innerHTML = '<em style=\"color:green\"><b><%:The Alist service is running.%></b></em>'
-						+ "<br/><br/><input class=\"btn cbi-button cbi-button-apply\" type=\"button\" value=\" <%:Click to open Alist%> \" onclick=\"window.open('http://" + window.location.hostname + ":" + st.port + "/')\"/>";
+					tb.innerHTML = '<em style=\"color:green\"><b><%:The Alist service is running.%></b></em>' + "<input class=\"cbi-button-reload mar-10\" type=\"button\" value=\" <%:Click to open Alist%> \" onclick=\"window.open('http://" + window.location.hostname + ":" + st.port + "/')\"/>";
 				}
 				else
 				{
@@ -19,8 +18,8 @@
 	);
 //]]></script>
 
+<style>.mar-10 {margin-left: 50px; margin-right: 10px;}</style>
 <fieldset class="cbi-section">
-	<legend><%:Alist Status%></legend>
 	<p id="alist_status">
 		<em><b><%:Collecting data...%></b></em>
 	</p>
