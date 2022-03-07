@@ -8,7 +8,9 @@ include $(TOPDIR)/rules.mk
 
 PKG_NAME:=alist
 PKG_VERSION:=2.1.3
-PKG_RELEASE:=1
+PKG_RELEASE:=2
+
+PKG_WEB_VERSION:=2.1.2
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/Xhofe/alist/tar.gz/v$(PKG_VERSION)?
@@ -74,9 +76,9 @@ endef
 define Build/Compile
 	( \
 		pushd $(PKG_BUILD_DIR) ; \
-			curl -o alist-web-$(PKG_VERSION).tar.gz https://codeload.github.com/alist-org/alist-web/tar.gz/refs/tags/$(PKG_VERSION) ; \
-			tar -zxvf alist-web-$(PKG_VERSION).tar.gz ; \
-			cd alist-web-$(PKG_VERSION) ; \
+			curl -o alist-web-$(PKG_WEB_VERSION).tar.gz https://codeload.github.com/alist-org/alist-web/tar.gz/refs/tags/$(PKG_WEB_VERSION) ; \
+			tar -zxvf alist-web-$(PKG_WEB_VERSION).tar.gz ; \
+			cd alist-web-$(PKG_WEB_VERSION) ; \
 			yarn && yarn build ; \
 			cp -ax dist/* ../public/ ; \
 		popd ; \
