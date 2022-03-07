@@ -16,14 +16,29 @@ msgstr "全局设置"
 msgid "Port"
 msgstr "端口"
 
+msgid "Enable SSL"
+msgstr "启用 SSL"
+
+msgid "SSL cert"
+msgstr "SSL 证书"
+
+msgid "SSL certificate file path"
+msgstr "SSL 证书文件路径"
+
+msgid "SSL key"
+msgstr "SSL 密钥"
+
+msgid "SSL key file path"
+msgstr "SSL 密钥文件路径"
+
 msgid "Cache settings"
 msgstr "缓存设置"
 
 msgid "Cache invalidation time (unit: minutes)"
 msgstr "缓存失效时间（分钟）"
 
-msgid "Clear the invalidation cache interval"
-msgstr "清理失效缓存间隔"
+msgid "Clear the invalidation cache interval (unit: minutes)"
+msgstr "清理失效缓存间隔（分钟）"
 
 msgid "Temp directory"
 msgstr "临时目录"
