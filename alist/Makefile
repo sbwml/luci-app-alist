@@ -81,6 +81,7 @@ define Build/Compile
 			cd alist-web-$(PKG_WEB_VERSION) ; \
 			yarn && yarn build ; \
 			cp -ax dist/* ../public/ ; \
+			cp -ax $(CURDIR)/files/assets/* ../public/assets/ ; \
 		popd ; \
 		$(call GoPackage/Build/Compile) ; \
 	)
