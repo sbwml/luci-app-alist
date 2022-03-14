@@ -7,14 +7,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=alist
-PKG_VERSION:=2.1.3
-PKG_RELEASE:=2
-
-PKG_WEB_VERSION:=2.1.2
+PKG_VERSION:=2.2.0
+PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/Xhofe/alist/tar.gz/v$(PKG_VERSION)?
-PKG_HASH:=7e9ed28aa6363ddc6691b8f42e9d7639f83e1e7ed9b3ce811c000f152fe97524
+PKG_HASH:=4d1a7b34823f616aab1a1b3a2cfe649f96d2716180c1f686708de32ea061f4c3
 
 PKG_LICENSE:=GPL-3.0
 PKG_LICENSE_FILE:=LICENSE
@@ -76,9 +74,9 @@ endef
 define Build/Compile
 	( \
 		pushd $(PKG_BUILD_DIR) ; \
-			curl -o alist-web-$(PKG_WEB_VERSION).tar.gz https://codeload.github.com/alist-org/alist-web/tar.gz/refs/tags/$(PKG_WEB_VERSION) ; \
-			tar -zxvf alist-web-$(PKG_WEB_VERSION).tar.gz ; \
-			cd alist-web-$(PKG_WEB_VERSION) ; \
+			curl -o alist-web-$(PKG_VERSION).tar.gz https://codeload.github.com/alist-org/alist-web/tar.gz/refs/tags/$(PKG_VERSION) ; \
+			tar -zxvf alist-web-$(PKG_VERSION).tar.gz ; \
+			cd alist-web-$(PKG_VERSION) ; \
 			yarn && yarn build ; \
 			cp -ax dist/* ../public/ ; \
 			cp -ax $(CURDIR)/files/assets/* ../public/assets/ ; \
