@@ -7,17 +7,24 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=alist
-PKG_VERSION:=2.3.2
-PKG_WEB_VERSION:=2.3.0
+PKG_VERSION:=2.4.3
+PKG_WEB_VERSION:=2.4.0
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/Xhofe/alist/tar.gz/v$(PKG_VERSION)?
-PKG_HASH:=557e4442115eba99cad04a03a02ff5286c0b523fdf550de797905a4bb226ea31
+PKG_HASH:=b87666be8461362454697f6f3f011d9b0d891cd054f39e1ac3fe1ce0c7fdddca
 
 PKG_LICENSE:=GPL-3.0
 PKG_LICENSE_FILE:=LICENSE
 PKG_MAINTAINER:=sbwml <admin@cooluc.com>
+
+define Download/$(PKG_NAME)-web
+  FILE:=$(PKG_NAME)-web-$(PKG_WEB_VERSION).tar.gz
+  URL_FILE:=$(PKG_WEB_VERSION).tar.gz
+  URL:=https://github.com/alist-org/alist-web/archive/refs/tags/
+  HASH:=793f388d354deca749b114b556fbdbe8fc4adccf5756cde99dc16a89d9d934d3
+endef
 
 PKG_CONFIG_DEPENDS:=CONFIG_ALIST_COMPRESS_UPX
 
@@ -75,8 +82,7 @@ endef
 define Build/Compile
 	( \
 		pushd $(PKG_BUILD_DIR) ; \
-			curl -o alist-web-$(PKG_WEB_VERSION).tar.gz https://codeload.github.com/alist-org/alist-web/tar.gz/refs/tags/$(PKG_WEB_VERSION) ; \
-			tar -zxvf alist-web-$(PKG_WEB_VERSION).tar.gz ; \
+			tar -zxvf $(DL_DIR)/$(PKG_NAME)-web-$(PKG_WEB_VERSION).tar.gz -C ./ ; \
 			cd alist-web-$(PKG_WEB_VERSION) ; \
 			yarn && yarn build ; \
 			cp -ax dist/* ../public/ ; \
@@ -98,5 +104,6 @@ define Package/$(PKG_NAME)/install
 	$(INSTALL_CONF) ./files/data.db $(1)/etc/alist/data.db
 endef
 
+$(eval $(call Download,$(PKG_NAME)-web))
 $(eval $(call GoBinPackage,$(PKG_NAME)))
 $(eval $(call BuildPackage,$(PKG_NAME)))
