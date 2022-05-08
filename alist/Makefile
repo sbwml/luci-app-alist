@@ -7,13 +7,13 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=alist
-PKG_VERSION:=2.4.3
-PKG_WEB_VERSION:=2.4.0
-PKG_RELEASE:=1
+PKG_VERSION:=2.5.1
+PKG_WEB_VERSION:=2.5.0
+PKG_RELEASE:=$(AUTORELEASE)
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/Xhofe/alist/tar.gz/v$(PKG_VERSION)?
-PKG_HASH:=b87666be8461362454697f6f3f011d9b0d891cd054f39e1ac3fe1ce0c7fdddca
+PKG_HASH:=7d11b568f7a2105c25cc24ff4da89c61603a5eb2293f5d4e40fdc4b98bdfed14
 
 PKG_LICENSE:=GPL-3.0
 PKG_LICENSE_FILE:=LICENSE
@@ -23,7 +23,7 @@ define Download/$(PKG_NAME)-web
   FILE:=$(PKG_NAME)-web-$(PKG_WEB_VERSION).tar.gz
   URL_FILE:=$(PKG_WEB_VERSION).tar.gz
   URL:=https://github.com/alist-org/alist-web/archive/refs/tags/
-  HASH:=793f388d354deca749b114b556fbdbe8fc4adccf5756cde99dc16a89d9d934d3
+  HASH:=8bd49960b6ec6af336e803f3e4fc341ab26247229c6ed583abc3b6de6847298d
 endef
 
 PKG_CONFIG_DEPENDS:=CONFIG_ALIST_COMPRESS_UPX
