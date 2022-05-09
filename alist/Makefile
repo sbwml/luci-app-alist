@@ -9,7 +9,7 @@ include $(TOPDIR)/rules.mk
 PKG_NAME:=alist
 PKG_VERSION:=2.5.1
 PKG_WEB_VERSION:=2.5.0
-PKG_RELEASE:=$(AUTORELEASE)
+PKG_RELEASE:=2
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/Xhofe/alist/tar.gz/v$(PKG_VERSION)?
@@ -96,8 +96,8 @@ endif
 endef
 
 define Package/$(PKG_NAME)/install
-	$(INSTALL_DIR) $(1)/etc/alist $(1)/etc/config $(1)/etc/init.d $(1)/etc/uci-defaults
-	$(call GoPackage/Package/Install/Bin,$(1))
+	$(INSTALL_DIR) $(1)/etc/alist $(1)/etc/config $(1)/etc/init.d $(1)/etc/uci-defaults $(1)/usr/bin
+	$(INSTALL_BIN) $(GO_PKG_BUILD_DIR)/bin/$(GO_OS_ARCH)/alist $(1)/usr/bin
 	$(INSTALL_CONF) ./files/alist.config $(1)/etc/config/alist
 	$(INSTALL_BIN) ./files/alist.init $(1)/etc/init.d/alist
 	$(INSTALL_BIN) ./files/alist.uci-default $(1)/etc/uci-defaults/alist
