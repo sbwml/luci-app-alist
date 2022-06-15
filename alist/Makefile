@@ -9,7 +9,7 @@ include $(TOPDIR)/rules.mk
 PKG_NAME:=alist
 PKG_VERSION:=2.6.1
 PKG_WEB_VERSION:=2.6.0
-PKG_RELEASE:=1
+PKG_RELEASE:=2
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/alist-org/alist/tar.gz/v$(PKG_VERSION)?
@@ -21,14 +21,14 @@ PKG_MAINTAINER:=sbwml <admin@cooluc.com>
 
 define Download/$(PKG_NAME)-web
   FILE:=$(PKG_NAME)-web-$(PKG_WEB_VERSION).tar.gz
-  URL_FILE:=$(PKG_WEB_VERSION).tar.gz
-  URL:=https://github.com/alist-org/alist-web/archive/refs/tags/
-  HASH:=a0a18b3329596d149ac0598c8aa5328d0dd42fb41c2f6b1b0182ebde205b69f2
+  URL_FILE:=dist.tar.gz
+  URL:=https://github.com/alist-org/alist-web/releases/download/$(PKG_WEB_VERSION)/
+  HASH:=d11099a302cf2c4be54f56c79aa77838c4d1ede487bc42f0c8a6cca9588971f2
 endef
 
 PKG_CONFIG_DEPENDS:=CONFIG_ALIST_COMPRESS_UPX
 
-PKG_BUILD_DEPENDS:=golang/host node/host node-yarn/host
+PKG_BUILD_DEPENDS:=golang/host
 PKG_BUILD_PARALLEL:=1
 PKG_USE_MIPS16:=0
 
@@ -77,19 +77,13 @@ endef
 
 define Build/Prepare
 	$(call Build/Prepare/Default)
+	$(eval $(call Download,$(PKG_NAME)-web))
+	$(TAR) --strip-components=1 -C $(PKG_BUILD_DIR)/public -xzf $(DL_DIR)/$(PKG_NAME)-web-$(PKG_WEB_VERSION).tar.gz
+	$(CP) ./files/assets/. $(PKG_BUILD_DIR)/public/assets/
 endef
 
 define Build/Compile
-	( \
-		pushd $(PKG_BUILD_DIR) ; \
-			tar -zxvf $(DL_DIR)/$(PKG_NAME)-web-$(PKG_WEB_VERSION).tar.gz -C ./ ; \
-			cd alist-web-$(PKG_WEB_VERSION) ; \
-			yarn && yarn build ; \
-			cp -ax dist/* ../public/ ; \
-			cp -ax $(CURDIR)/files/assets/* ../public/assets/ ; \
-		popd ; \
-		$(call GoPackage/Build/Compile) ; \
-	)
+	$(call GoPackage/Build/Compile)
 ifneq ($(CONFIG_ALIST_COMPRESS_UPX),)
 	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(GO_PKG_BUILD_BIN_DIR)/alist
 endif
@@ -104,6 +98,5 @@ define Package/$(PKG_NAME)/install
 	$(INSTALL_CONF) ./files/data.db $(1)/etc/alist/data.db
 endef
 
-$(eval $(call Download,$(PKG_NAME)-web))
 $(eval $(call GoBinPackage,$(PKG_NAME)))
 $(eval $(call BuildPackage,$(PKG_NAME)))

@@ -13,10 +13,8 @@ uci -q batch <<-EOF >/dev/null
 	set firewall.alist.src="wan"
 	set firewall.alist.proto="tcp"
 	set firewall.alist.dest_port="5244"
+	set firewall.alist.enabled="0"
 	commit firewall
 EOF
-
-/etc/init.d/alist enable
-/etc/init.d/alist start
 
 exit 0
