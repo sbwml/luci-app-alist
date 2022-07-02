@@ -22,7 +22,7 @@ PKG_MAINTAINER:=sbwml <admin@cooluc.com>
 define Download/$(PKG_NAME)-web
   FILE:=$(PKG_NAME)-web-$(PKG_WEB_VERSION).tar.gz
   URL_FILE:=dist.tar.gz
-  URL:=https://github.com/alist-org/alist-web/releases/download/$(PKG_WEB_VERSION)/
+  URL:=https://github.com/alist-org/web-v2/releases/download/$(PKG_WEB_VERSION)/
   HASH:=d11099a302cf2c4be54f56c79aa77838c4d1ede487bc42f0c8a6cca9588971f2
 endef
 
