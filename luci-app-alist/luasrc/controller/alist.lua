@@ -5,8 +5,8 @@ function index()
 		return
 	end
 
+	entry({"admin", "nas"}, firstchild(), "NAS", 44).dependent = false
 	entry({"admin", "nas", "alist"}, cbi("alist"), _("Alist"), 20).dependent = true
-
 	entry({"admin", "nas", "alist_status"}, call("alist_status"))
 end
 

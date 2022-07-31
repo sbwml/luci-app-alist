@@ -52,3 +52,5 @@ msgstr "Alist 服务未启动"
 msgid "Collecting data..."
 msgstr "收集数据..."
 
+msgid "NAS"
+msgstr "网络存储"
