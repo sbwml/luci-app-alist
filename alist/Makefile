@@ -63,18 +63,6 @@ config ALIST_COMPRESS_UPX
 	default n
 endef
 
-define Package/$(PKG_NAME)/conffiles
-/etc/alist/
-/etc/config/alist
-endef
-
-define Package/$(PKG_NAME)/postinst
-#!/bin/sh
-if [ -z "$${IPKG_INSTROOT}" ]; then
-	[ -f /etc/uci-defaults/alist ] && /etc/uci-defaults/alist && rm -f /etc/uci-defaults/alist
-fi
-endef
-
 define Build/Prepare
 	$(call Build/Prepare/Default)
 	$(eval $(call Download,$(PKG_NAME)-web))
@@ -90,12 +78,8 @@ endif
 endef
 
 define Package/$(PKG_NAME)/install
-	$(INSTALL_DIR) $(1)/etc/alist $(1)/etc/config $(1)/etc/init.d $(1)/etc/uci-defaults $(1)/usr/bin
+	$(INSTALL_DIR) $(1)/usr/bin
 	$(INSTALL_BIN) $(GO_PKG_BUILD_BIN_DIR)/alist $(1)/usr/bin
-	$(INSTALL_CONF) ./files/alist.config $(1)/etc/config/alist
-	$(INSTALL_BIN) ./files/alist.init $(1)/etc/init.d/alist
-	$(INSTALL_BIN) ./files/alist.uci-default $(1)/etc/uci-defaults/alist
-	$(INSTALL_CONF) ./files/data.db $(1)/etc/alist/data.db
 endef
 
 $(eval $(call GoBinPackage,$(PKG_NAME)))
