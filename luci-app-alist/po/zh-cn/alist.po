@@ -43,8 +43,8 @@ msgstr "缓存失效时间（分钟）"
 msgid "Clear the invalidation cache interval (unit: minutes)"
 msgstr "清理失效缓存间隔（分钟）"
 
-msgid "Temp directory"
-msgstr "临时目录"
+msgid "Cache directory"
+msgstr "缓存目录"
 
 msgid "The Alist service is running."
 msgstr "Alist 服务已启动"
@@ -57,3 +57,6 @@ msgstr "收集数据..."
 
 msgid "NAS"
 msgstr "网络存储"
+
+msgid "User Manual"
+msgstr "用户手册"
