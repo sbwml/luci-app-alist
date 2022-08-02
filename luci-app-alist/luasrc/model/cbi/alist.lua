@@ -1,6 +1,12 @@
 local m, s
+local sys  = require "luci.sys"
 
-m = Map("alist", translate("Alist"), translate("Alist is an file list program that supports multiple storage. Default password: alist"))
+if sys.call("pidof alist >/dev/null") == 0 then
+	local password = sys.exec("/usr/bin/alist --conf /etc/alist/config.json -password | awk '{print $3}'")
+	m = Map("alist", translate("Alist"), translate("A file list program that supports multiple storage.") .. " " .. translate("manage password:") .. "<font color=\"green\">" .. password .. "</font>")
+else
+	m = Map("alist", translate("Alist"), translate("A file list program that supports multiple storage."))
+end
 
 m:section(SimpleSection).template  = "alist_status"
 

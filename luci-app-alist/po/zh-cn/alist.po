@@ -7,8 +7,11 @@ msgstr "运行状态"
 msgid "Click to open Alist"
 msgstr "点击打开 Alist"
 
-msgid "Alist is an file list program that supports multiple storage. Default password: alist"
-msgstr "Alist 是一个支持多存储的文件列表程序。默认密码：alist"
+msgid "A file list program that supports multiple storage."
+msgstr "一款支持多种存储的目录文件列表程序。"
+
+msgid "manage password:"
+msgstr "管理密码："
 
 msgid "Global settings"
 msgstr "全局设置"
