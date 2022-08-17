@@ -10,7 +10,7 @@ PKG_VERSION:=1.0.4
 PKG_RELEASE:=1
 
 LUCI_TITLE:=LuCI support for alist
-LUCI_DEPENDS:=+alist
+LUCI_DEPENDS:=+alist +luci-compat
 
 define Package/$(PKG_NAME)/conffiles
 /etc/alist
