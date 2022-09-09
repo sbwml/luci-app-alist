@@ -34,15 +34,6 @@ msgstr "SSL 密钥"
 msgid "SSL key file path"
 msgstr "SSL 密钥文件路径"
 
-msgid "Cache settings"
-msgstr "缓存设置"
-
-msgid "Cache invalidation time (unit: minutes)"
-msgstr "缓存失效时间（分钟）"
-
-msgid "Clear the invalidation cache interval (unit: minutes)"
-msgstr "清理失效缓存间隔（分钟）"
-
 msgid "Cache directory"
 msgstr "缓存目录"
 
