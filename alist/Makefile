@@ -37,8 +37,7 @@ GO_PKG:=github.com/alist-org/alist
 GO_PKG_LDFLAGS:=-w -s
 GO_PKG_LDFLAGS_X:= \
 	$(PKG_ALIST).Version=v$(PKG_VERSION)-$(ARCH) \
-	$(PKG_ALIST).WebVersion=$(PKG_WEB_VERSION) \
-	$(PKG_ALIST).BuiltAt=$(shell date "+%F %T %z")
+	$(PKG_ALIST).WebVersion=$(PKG_WEB_VERSION)
 
 include $(INCLUDE_DIR)/package.mk
 include $(TOPDIR)/feeds/packages/lang/golang/golang-package.mk
