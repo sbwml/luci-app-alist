@@ -55,3 +55,6 @@ msgstr "用户手册"
 #: luci-app-alist/luasrc/model/cbi/alist.lua:35
 msgid "Allow Access From Internet"
 msgstr "允许从外网访问"
+
+msgid "Default username and password:"
+msgstr "默认用户名和密码："
