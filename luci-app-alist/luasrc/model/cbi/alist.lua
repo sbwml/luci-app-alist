@@ -21,22 +21,23 @@ o = s:option(Value, "port", translate("Port"))
 o.datatype = "and(port,min(1))"
 o.rmempty = false
 
-o = s:option(Value, "temp_dir", translate("Cache directory"))
-o.datatype = "string"
-o.default = "/tmp/alist"
-o.rmempty = false
-
 o = s:option(Flag, "ssl", translate("Enable SSL"))
 o.rmempty=false
 
 o = s:option(Value,"ssl_cert", translate("SSL cert"), translate("SSL certificate file path"))
+o.datatype = "file"
 o:depends("ssl", "1")
-o.datatype = "string"
-o.rmempty = true
 
 o = s:option(Value,"ssl_key", translate("SSL key"), translate("SSL key file path"))
+o.datatype = "file"
 o:depends("ssl", "1")
+
+o = s:option(Flag, "allow_wan", translate("Allow Access From Internet"))
+o.rmempty = false
+
+o = s:option(Value, "temp_dir", translate("Cache directory"))
 o.datatype = "string"
-o.rmempty = true
+o.default = "/tmp/alist"
+o.rmempty = false
 
 return m
