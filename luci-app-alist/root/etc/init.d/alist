@@ -60,6 +60,7 @@ start_service() {
 		external_access="deny"
 	fi
 	set_firewall
+	cat /dev/null > $temp_dir/alist.log
 	cat > $CONFIG <<EOF
 {"force":false,"address":"$listen_addr","port":$port,"jwt_secret":"","cdn":"","database":{"type":"sqlite3","host":"","port":0,"user":"","password":"","name":"","db_file":"/etc/alist/data.db","table_prefix":"x_","ssl_mode":""},"scheme":{"https":$SSL,"cert_file":"$ssl_cert","key_file":"$ssl_key"},"temp_dir":"$temp_dir","log":{"enable":$LOG,"name":"$temp_dir/alist.log","max_size":10,"max_backups":5,"max_age":28,"compress":false}}
 EOF
