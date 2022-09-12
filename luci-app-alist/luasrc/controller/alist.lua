@@ -5,9 +5,16 @@ function index()
 		return
 	end
 
+	local page = entry({"admin", "nas", "alist"}, alias("admin", "nas", "alist", "basic"), _("Alist"), 20)
+	page.dependent = true
+	page.acl_depends = { "luci-app-alist" }
+
 	entry({"admin", "nas"}, firstchild(), "NAS", 44).dependent = false
-	entry({"admin", "nas", "alist"}, cbi("alist"), _("Alist"), 20).dependent = true
-	entry({"admin", "nas", "alist_status"}, call("alist_status"))
+	entry({"admin", "nas", "alist", "basic"}, cbi("alist/basic"), _("Basic Setting"), 1).leaf = true
+	entry({"admin", "nas", "alist", "log"}, cbi("alist/log"), _("Logs"), 2).leaf = true
+	entry({"admin", "nas", "alist", "alist_status"}, call("alist_status")).leaf = true
+	entry({"admin", "nas", "alist", "get_log"}, call("get_log")).leaf = true
+	entry({"admin", "nas", "alist", "clear_log"}, call("clear_log")).leaf = true
 end
 
 function alist_status()
@@ -22,4 +29,12 @@ function alist_status()
 
 	luci.http.prepare_content("application/json")
 	luci.http.write_json(status)
+end
+
+function get_log()
+	luci.http.write(luci.sys.exec("cat $(uci -q get alist.@alist[0].temp_dir)/alist.log"))
+end
+
+function clear_log()
+	luci.sys.call("cat /dev/null > $(uci -q get alist.@alist[0].temp_dir)/alist.log")
 end
