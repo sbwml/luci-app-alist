@@ -10,9 +10,6 @@ msgstr "打开 Web 界面"
 msgid "A file list program that supports multiple storage."
 msgstr "一款支持多种存储的目录文件列表程序。"
 
-msgid "manage password:"
-msgstr "管理密码："
-
 msgid "Basic Setting"
 msgstr "基本设置"
 
@@ -55,11 +52,23 @@ msgstr "用户手册"
 msgid "Allow Access From Internet"
 msgstr "允许从外网访问"
 
-msgid "Default username and password:"
-msgstr "默认用户名和密码："
-
 msgid "Enable Logs"
 msgstr "启用日志"
 
 msgid "Clear logs"
 msgstr "清空日志"
+
+msgid "View Password"
+msgstr "查看密码"
+
+msgid "Username:"
+msgstr "用户名："
+
+msgid "Password:"
+msgstr "密码："
+
+msgid "Reading..."
+msgstr "读取中..."
+
+msgid "Read"
+msgstr "读取"
