@@ -40,4 +40,5 @@ A file list program that supports multiple storage.
 
 --------------
 
-![](https://user-images.githubusercontent.com/16485166/182457881-ac7dfb65-aa3b-41fb-9b55-1770f136aa5e.png)
+![](https://user-images.githubusercontent.com/16485166/190462187-5d54725e-1d9b-45f3-854f-403b882fb223.png)
+
