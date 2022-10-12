@@ -8,22 +8,22 @@ A file list program that supports multiple storage.
 
 - Openwrt official SnapShots
 
+  *1. update golang 19.x (Fix build for `openwrt-21.02/22.03` branches)*
+  ```shell
+  rm -rf feeds/packages/lang/golang
+  svn export https://github.com/sbwml/packages_lang_golang/branches/19.x feeds/packages/lang/golang
+  ```
+
+  *2. get luci-app-alist source & building*
   ```shell
   git clone https://github.com/sbwml/luci-app-alist package/alist
   make menuconfig # choose LUCI -> Applications -> luci-app-alist
   make V=s
   ```
 
-  *Fix build for `openwrt-21.02` branches (change golang 18.x)*
-
-  ```shell
-  rm -rf feeds/packages/lang/golang
-  svn export https://github.com/openwrt/packages/branches/openwrt-22.03/lang/golang feeds/packages/lang/golang
-  ```
-
 --------------
 
-## How to install prebuilt packages (OpenWrt 18 & 19 & 21 & 22 & master)
+## How to install prebuilt packages (OpenWrt 18-22 & master)
 
 - Login OpenWrt terminal (SSH)
 
