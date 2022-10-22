@@ -16,7 +16,7 @@ jobs:
           - x86_64
 
     steps:
-      - uses: actions/checkout@main
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
@@ -41,11 +41,9 @@ jobs:
           path: "*.ipk"
 
       - name: Upload packages
-        uses: svenstaro/upload-release-action@master
-        if: github.event_name == 'release'
+        uses: ncipollo/release-action@v1
         with:
-          repo_token: ${{ secrets.workflow_token }}
-          file: "*.ipk"
-          tag: ${{ github.ref }}
-          overwrite: true
-          file_glob: true
+          token: ${{ secrets.workflow_token }}
+          allowUpdates: true
+          replacesArtifacts: true
+          artifacts: "*.ipk"
