@@ -4,14 +4,20 @@ GREEN_COLOR='\e[1;32m'
 RES='\e[0m'
 
 # OpenWrt Info
-version=$(cat /etc/os-release | grep VERSION_ID | awk -F "[\"\"]" '{print $2}' | awk -F. '{print $1}')
-platform=$(opkg print-architecture | awk 'END{print $2}')
+if [ -f /etc/openwrt_release ]; then
+	. /etc/openwrt_release
+	version=$(echo ${DISTRIB_RELEASE%%.*})
+	platform=$(echo $DISTRIB_ARCH)
+else
+	echo -e "${RED_COLOR}Unknown OpenWRT Version${RES}"
+	exit 1
+fi
 
 # TMP
 TMPDIR=$(mktemp -d) || exit 1
 
 # GitHub mirror
-ip_info=$(curl -s https://ip.cooluc.com)
+ip_info=$(curl -sk https://ip.cooluc.com)
 country_code=$(echo $ip_info | sed -r 's/.*country_code":"([^"]*).*/\1/')
 if [ $country_code = "CN" ]; then
 	google_status=$(curl -I -4 -m 3 -o /dev/null -s -w %{http_code} http://www.google.com/generate_204)
@@ -47,7 +53,7 @@ CHECK() (
 DOWNLOAD() (
 	echo -e "\r\n${GREEN_COLOR}Download Packages ...${RES}\r\n"
 	# get repos info
-	curl -s --connect-timeout 10 "https://api.github.com/repos/sbwml/luci-app-alist/releases" | grep "browser_download_url" > $TMPDIR/releases.txt
+	curl -sk --connect-timeout 10 "https://api.github.com/repos/sbwml/luci-app-alist/releases" | grep "browser_download_url" > $TMPDIR/releases.txt
 	if [ $? -ne 0 ]; then
 		echo -e "${RED_COLOR}Failed to get version information, Please check the network status.${RES}"
 		rm -rf $TMPDIR
@@ -64,21 +70,21 @@ DOWNLOAD() (
 
 	# download
 	echo -e "${GREEN_COLOR}Downloading $alist ...${RES}"
-	curl --connect-timeout 30 -m 600 -Lo "$TMPDIR/alist_$platform.ipk" $mirror$alist
+	curl --connect-timeout 30 -m 600 -kLo "$TMPDIR/alist_$platform.ipk" $mirror$alist
 	if [ $? -ne 0 ]; then
 		echo -e "\r\n${RED_COLOR}Error! Download $alist failed.${RES}"
 		rm -rf $TMPDIR
 		exit 1
 	fi
 	echo -e "${GREEN_COLOR}Downloading $luci_app ...${RES}"
-	curl --connect-timeout 30 -m 600 -Lo "$TMPDIR/luci-app-alist.ipk" $mirror$luci_app
+	curl --connect-timeout 30 -m 600 -kLo "$TMPDIR/luci-app-alist.ipk" $mirror$luci_app
 	if [ $? -ne 0 ]; then
 		echo -e "\r\n${RED_COLOR}Error! Download $luci_app failed.${RES}"
 		rm -rf $TMPDIR
 		exit 1
 	fi
 	echo -e "${GREEN_COLOR}Downloading $luci_i18n ...${RES}"
-	curl --connect-timeout 30 -m 600 -Lo "$TMPDIR/luci-i18n-alist-zh-cn.ipk" $mirror$luci_i18n
+	curl --connect-timeout 30 -m 600 -kLo "$TMPDIR/luci-i18n-alist-zh-cn.ipk" $mirror$luci_i18n
 	if [ $? -ne 0 ]; then
 		echo -e "\r\n${RED_COLOR}Error! Download $luci_i18n failed.${RES}"
 		rm -rf $TMPDIR
