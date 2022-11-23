@@ -23,7 +23,7 @@ A file list program that supports multiple storage.
 
 --------------
 
-## How to install prebuilt packages (OpenWrt 18-22 & master)
+## How to install prebuilt packages (OpenWrt 21,22,master)
 
 - Login OpenWrt terminal (SSH)
 
