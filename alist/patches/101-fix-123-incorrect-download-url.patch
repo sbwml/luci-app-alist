@@ -1,0 +1,30 @@
+From 2ca3e0b8bca4115ffb0e4cde8cf3cc92a8bb1e94 Mon Sep 17 00:00:00 2001
+From: Andy Hsu <i@nn.ci>
+Date: Tue, 14 Feb 2023 15:47:41 +0800
+Subject: [PATCH] fix(123): incorrect download url (close #3385)
+
+---
+ drivers/123/driver.go | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/123/driver.go b/drivers/123/driver.go
+index 1b300c0e89..cdd8e6f181 100644
+--- a/drivers/123/driver.go
++++ b/drivers/123/driver.go
+@@ -96,14 +96,14 @@ func (d *Pan123) Link(ctx context.Context, file model.Obj, args model.LinkArgs)
+ 				return nil, err
+ 			}
+ 		}
+-		u_ := fmt.Sprintf("https://%s%s", u.Host, u.Path)
++		u_ := u.String()
+ 		res, err := base.NoRedirectClient.R().SetQueryParamsFromValues(u.Query()).Head(u_)
+ 		if err != nil {
+ 			return nil, err
+ 		}
+ 		log.Debug(res.String())
+ 		link := model.Link{
+-			URL: downloadUrl,
++			URL: u_,
+ 		}
+ 		log.Debugln("res code: ", res.StatusCode())
+ 		if res.StatusCode() == 302 {

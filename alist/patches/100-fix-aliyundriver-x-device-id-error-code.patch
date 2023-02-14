@@ -1,0 +1,303 @@
+From 46b2ed250763dbc314805e7120650ce3a5e9e2dd Mon Sep 17 00:00:00 2001
+From: foxxorcat <95907542+foxxorcat@users.noreply.github.com>
+Date: Tue, 14 Feb 2023 14:11:07 +0800
+Subject: [PATCH] fix(aliyundriver):x-device-id error code (#3390)
+
+* fix(aliyundriver):x-drvice-id error code
+
+* fix(aliyunpan):session signature error
+
+* fix typo
+
+---------
+
+Co-authored-by: Andy Hsu <i@nn.ci>
+---
+ drivers/aliyundrive/driver.go | 34 ++++++++++++++++++
+ drivers/aliyundrive/help.go   | 66 +++++++++++++++++++++++++++++++++++
+ drivers/aliyundrive/meta.go   |  1 +
+ drivers/aliyundrive/util.go   | 43 +++++++++++++++++++++--
+ go.mod                        |  1 +
+ go.sum                        |  2 ++
+ pkg/utils/hash.go             |  7 ++++
+ 7 files changed, 151 insertions(+), 3 deletions(-)
+ create mode 100644 drivers/aliyundrive/help.go
+
+diff --git a/drivers/aliyundrive/driver.go b/drivers/aliyundrive/driver.go
+index 1e56befe04..9297b5a9dd 100644
+--- a/drivers/aliyundrive/driver.go
++++ b/drivers/aliyundrive/driver.go
+@@ -3,6 +3,7 @@ package aliyundrive
+ import (
+ 	"bytes"
+ 	"context"
++	"crypto/ecdsa"
+ 	"crypto/sha1"
+ 	"encoding/base64"
+ 	"encoding/hex"
+@@ -31,6 +32,12 @@ type AliDrive struct {
+ 	AccessToken string
+ 	cron        *cron.Cron
+ 	DriveId     string
++	UserID      string
++
++	signature  string
++	nonce      int
++	privateKey *ecdsa.PrivateKey
++	cron2      *cron.Cron
+ }
+ 
+ func (d *AliDrive) Config() driver.Config {
+@@ -54,6 +61,7 @@ func (d *AliDrive) Init(ctx context.Context) error {
+ 		return err
+ 	}
+ 	d.DriveId = utils.Json.Get(res, "default_drive_id").ToString()
++	d.UserID = utils.Json.Get(res, "user_id").ToString()
+ 	d.cron = cron.NewCron(time.Hour * 2)
+ 	d.cron.Do(func() {
+ 		err := d.refreshToken()
+@@ -61,6 +69,29 @@ func (d *AliDrive) Init(ctx context.Context) error {
+ 			log.Errorf("%+v", err)
+ 		}
+ 	})
++
++	// init deviceID
++	if len(d.DeviceID) < 64 {
++		d.DeviceID = utils.GetSHA256Encode(d.DeviceID)
++	}
++
++	// init privateKey
++	d.privateKey, _ = NewPrivateKey()
++
++	// init signature
++	d.sign()
++	d.createSession()
++	d.cron2 = cron.NewCron(time.Minute * 5)
++	d.cron2.Do(func() {
++		d.nonce++
++		d.sign()
++		err := d.renewSession()
++		if d.nonce >= 1073741823 || (err != nil && err.Error() == "device session signature error") {
++			d.nonce = 0
++			d.sign()
++			d.createSession()
++		}
++	})
+ 	return err
+ }
+ 
+@@ -68,6 +99,9 @@ func (d *AliDrive) Drop(ctx context.Context) error {
+ 	if d.cron != nil {
+ 		d.cron.Stop()
+ 	}
++	if d.cron2 != nil {
++		d.cron2.Stop()
++	}
+ 	return nil
+ }
+ 
+diff --git a/drivers/aliyundrive/help.go b/drivers/aliyundrive/help.go
+new file mode 100644
+index 0000000000..2037f54553
+--- /dev/null
++++ b/drivers/aliyundrive/help.go
+@@ -0,0 +1,66 @@
++package aliyundrive
++
++import (
++	"crypto/ecdsa"
++	"crypto/rand"
++	"encoding/hex"
++	"math/big"
++
++	"github.com/dustinxie/ecc"
++)
++
++func NewPrivateKey() (*ecdsa.PrivateKey, error) {
++	p256k1 := ecc.P256k1()
++	return ecdsa.GenerateKey(p256k1, rand.Reader)
++}
++
++func NewPrivateKeyFromHex(hex_ string) (*ecdsa.PrivateKey, error) {
++	data, err := hex.DecodeString(hex_)
++	if err != nil {
++		return nil, err
++	}
++	return NewPrivateKeyFromBytes(data), nil
++
++}
++
++func NewPrivateKeyFromBytes(priv []byte) *ecdsa.PrivateKey {
++	p256k1 := ecc.P256k1()
++	x, y := p256k1.ScalarBaseMult(priv)
++	return &ecdsa.PrivateKey{
++		PublicKey: ecdsa.PublicKey{
++			Curve: p256k1,
++			X:     x,
++			Y:     y,
++		},
++		D: new(big.Int).SetBytes(priv),
++	}
++}
++
++func PrivateKeyToHex(private *ecdsa.PrivateKey) string {
++	return hex.EncodeToString(PrivateKeyToBytes(private))
++}
++
++func PrivateKeyToBytes(private *ecdsa.PrivateKey) []byte {
++	return private.D.Bytes()
++}
++
++func PublicKeyToHex(public *ecdsa.PublicKey) string {
++	return hex.EncodeToString(PublicKeyToBytes(public))
++}
++
++func PublicKeyToBytes(public *ecdsa.PublicKey) []byte {
++	x := public.X.Bytes()
++	if len(x) < 32 {
++		for i := 0; i < 32-len(x); i++ {
++			x = append([]byte{0}, x...)
++		}
++	}
++
++	y := public.Y.Bytes()
++	if len(y) < 32 {
++		for i := 0; i < 32-len(y); i++ {
++			y = append([]byte{0}, y...)
++		}
++	}
++	return append(x, y...)
++}
+diff --git a/drivers/aliyundrive/meta.go b/drivers/aliyundrive/meta.go
+index ff627dab12..cc19d7500c 100644
+--- a/drivers/aliyundrive/meta.go
++++ b/drivers/aliyundrive/meta.go
+@@ -8,6 +8,7 @@ import (
+ type Addition struct {
+ 	driver.RootID
+ 	RefreshToken   string `json:"refresh_token" required:"true"`
++	DeviceID       string `json:"device_id" required:"true"`
+ 	OrderBy        string `json:"order_by" type:"select" options:"name,size,updated_at,created_at"`
+ 	OrderDirection string `json:"order_direction" type:"select" options:"ASC,DESC"`
+ 	RapidUpload    bool   `json:"rapid_upload"`
+diff --git a/drivers/aliyundrive/util.go b/drivers/aliyundrive/util.go
+index a1af1fef95..37588f03cf 100644
+--- a/drivers/aliyundrive/util.go
++++ b/drivers/aliyundrive/util.go
+@@ -1,6 +1,8 @@
+ package aliyundrive
+ 
+ import (
++	"crypto/sha256"
++	"encoding/hex"
+ 	"errors"
+ 	"fmt"
+ 	"net/http"
+@@ -8,9 +10,37 @@ import (
+ 	"github.com/alist-org/alist/v3/drivers/base"
+ 	"github.com/alist-org/alist/v3/internal/op"
+ 	"github.com/alist-org/alist/v3/pkg/utils"
++	"github.com/dustinxie/ecc"
+ 	"github.com/go-resty/resty/v2"
++	"github.com/google/uuid"
+ )
+ 
++func (d *AliDrive) createSession() error {
++	_, err, _ := d.request("https://api.aliyundrive.com/users/v1/users/device/create_session", http.MethodPost, func(req *resty.Request) {
++		req.SetBody(base.Json{
++			"deviceName":   "samsung",
++			"modelName":    "SM-G9810",
++			"nonce":        d.nonce,
++			"pubKey":       PublicKeyToHex(&d.privateKey.PublicKey),
++			"refreshToken": d.RefreshToken,
++		})
++	}, nil)
++	return err
++}
++
++func (d *AliDrive) renewSession() error {
++	_, err, _ := d.request("https://api.aliyundrive.com/users/v1/users/device/renew_session", http.MethodPost, nil, nil)
++	return err
++}
++
++func (d *AliDrive) sign() {
++	secpAppID := "5dde4e1bdf9e4966b387ba58f4b3fdc3"
++	singdata := fmt.Sprintf("%s:%s:%s:%d", secpAppID, d.DeviceID, d.UserID, d.nonce)
++	hash := sha256.Sum256([]byte(singdata))
++	data, _ := ecc.SignBytes(d.privateKey, hash[:], ecc.RecID|ecc.LowerS)
++	d.signature = hex.EncodeToString(data)
++}
++
+ // do others that not defined in Driver interface
+ 
+ func (d *AliDrive) refreshToken() error {
+@@ -39,9 +69,16 @@ func (d *AliDrive) refreshToken() error {
+ 
+ func (d *AliDrive) request(url, method string, callback base.ReqCallback, resp interface{}) ([]byte, error, RespErr) {
+ 	req := base.RestyClient.R()
+-	req.SetHeader("Authorization", "Bearer\t"+d.AccessToken)
+-	req.SetHeader("content-type", "application/json")
+-	req.SetHeader("origin", "https://www.aliyundrive.com")
++	req.SetHeaders(map[string]string{
++		"Authorization": "Bearer\t" + d.AccessToken,
++		"content-type":  "application/json",
++		"origin":        "https://www.aliyundrive.com",
++		"Referer":       "https://aliyundrive.com/",
++		"X-Signature":   d.signature,
++		"x-request-id":  uuid.NewString(),
++		"X-Canary":      "client=Android,app=adrive,version=v4.1.0",
++		"X-Device-Id":   d.DeviceID,
++	})
+ 	if callback != nil {
+ 		callback(req)
+ 	} else {
+diff --git a/go.mod b/go.mod
+index 424aa83c74..26344c7a3f 100644
+--- a/go.mod
++++ b/go.mod
+@@ -62,6 +62,7 @@ require (
+ 	github.com/blevesearch/zapx/v15 v15.3.8 // indirect
+ 	github.com/bluele/gcache v0.0.2 // indirect
+ 	github.com/boombuler/barcode v1.0.1-0.20190219062509-6c824513bacc // indirect
++	github.com/dustinxie/ecc v0.0.0-20210511000915-959544187564 // indirect
+ 	github.com/gaoyb7/115drive-webdav v0.1.8 // indirect
+ 	github.com/geoffgarside/ber v1.1.0 // indirect
+ 	github.com/gin-contrib/sse v0.1.0 // indirect
+diff --git a/go.sum b/go.sum
+index e422a32174..1793b7f513 100644
+--- a/go.sum
++++ b/go.sum
+@@ -63,6 +63,8 @@ github.com/deckarep/golang-set/v2 v2.1.0 h1:g47V4Or+DUdzbs8FxCCmgb6VYd+ptPAngjM6
+ github.com/deckarep/golang-set/v2 v2.1.0/go.mod h1:VAky9rY/yGXJOLEDv3OMci+7wtDpOF4IN+y82NBOac4=
+ github.com/disintegration/imaging v1.6.2 h1:w1LecBlG2Lnp8B3jk5zSuNqd7b4DXhcjwek1ei82L+c=
+ github.com/disintegration/imaging v1.6.2/go.mod h1:44/5580QXChDfwIclfc/PCwrr44amcmDAg8hxG0Ewe4=
++github.com/dustinxie/ecc v0.0.0-20210511000915-959544187564 h1:I6KUy4CI6hHjqnyJLNCEi7YHVMkwwtfSr2k9splgdSM=
++github.com/dustinxie/ecc v0.0.0-20210511000915-959544187564/go.mod h1:yekO+3ZShy19S+bsmnERmznGy9Rfg6dWWWpiGJjNAz8=
+ github.com/gaoyb7/115drive-webdav v0.1.8 h1:EJt4PSmcbvBY4KUh2zSo5p6fN9LZFNkIzuKejipubVw=
+ github.com/gaoyb7/115drive-webdav v0.1.8/go.mod h1:BKbeY6j8SKs3+rzBFFALznGxbPmefEm3vA+dGhqgOGU=
+ github.com/geoffgarside/ber v1.1.0 h1:qTmFG4jJbwiSzSXoNJeHcOprVzZ8Ulde2Rrrifu5U9w=
+diff --git a/pkg/utils/hash.go b/pkg/utils/hash.go
+index 6a61d6bab7..54e4de4dae 100644
+--- a/pkg/utils/hash.go
++++ b/pkg/utils/hash.go
+@@ -3,6 +3,7 @@ package utils
+ import (
+ 	"crypto/md5"
+ 	"crypto/sha1"
++	"crypto/sha256"
+ 	"encoding/base64"
+ 	"encoding/hex"
+ 	"strings"
+@@ -14,6 +15,12 @@ func GetSHA1Encode(data string) string {
+ 	return hex.EncodeToString(h.Sum(nil))
+ }
+ 
++func GetSHA256Encode(data string) string {
++	h := sha256.New()
++	h.Write([]byte(data))
++	return hex.EncodeToString(h.Sum(nil))
++}
++
+ func GetMD5Encode(data string) string {
+ 	h := md5.New()
+ 	h.Write([]byte(data))
