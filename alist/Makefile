@@ -30,7 +30,7 @@ PKG_CONFIG_DEPENDS:= \
 	CONFIG_ALIST_COMPRESS_GOPROXY \
 	CONFIG_ALIST_COMPRESS_UPX
 
-PKG_BUILD_DEPENDS:=golang/host fuse
+PKG_BUILD_DEPENDS:=golang/host go-rice/host
 PKG_BUILD_PARALLEL:=1
 PKG_USE_MIPS16:=0
 
@@ -58,7 +58,7 @@ endef
 
 define Package/$(PKG_NAME)
 	$(call Package/alist/Default)
-	DEPENDS:=$(GO_ARCH_DEPENDS)
+	DEPENDS:=$(GO_ARCH_DEPENDS) +libfuse
 endef
 
 define Package/$(PKG_NAME)/config
