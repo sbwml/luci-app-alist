@@ -1,9 +1,9 @@
 name: Build
 
 on:
-  release:
-    types:
-      - published
+  push:
+    tags:
+      - v3.**
 
 jobs:
   build:
@@ -63,6 +63,7 @@ jobs:
       - name: Upload packages
         uses: ncipollo/release-action@v1
         with:
+          name: ${{ github.ref_name }}
           token: ${{ secrets.workflow_token }}
           allowUpdates: true
           replacesArtifacts: true
