@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    name: Build ${{ matrix.arch }}
+    name: Build ${{ matrix.arch }}-${{ matrix.sdk }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -40,6 +40,9 @@ jobs:
           - mipsel_74kc
           - mipsel_mips32
           - x86_64
+        sdk:
+          - openwrt-21.02
+          - openwrt-22.03
 
     steps:
       - uses: actions/checkout@v3
@@ -49,7 +52,7 @@ jobs:
       - name: Build
         uses: sbwml/openwrt-gh-action-sdk@go1.20
         env:
-          ARCH: ${{ matrix.arch }}-openwrt-22.03
+          ARCH: ${{ matrix.arch }}-${{ matrix.sdk }}
           FEEDNAME: packages_ci
           PACKAGES: luci-app-alist
           NO_REFRESH_CHECK: true
@@ -57,8 +60,12 @@ jobs:
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ matrix.arch }}
+          name: ${{ matrix.arch }}-${{ matrix.sdk }}
           path: bin/packages/${{ matrix.arch }}/packages_ci/*.ipk
+
+      - name: Create compress files
+        run: |
+          tar -zcvf ${{ matrix.sdk }}-${{ matrix.arch }}.tar.gz -C bin/packages/${{ matrix.arch }}/ packages_ci
 
       - name: Upload packages
         uses: ncipollo/release-action@v1
@@ -67,4 +74,4 @@ jobs:
           token: ${{ secrets.workflow_token }}
           allowUpdates: true
           replacesArtifacts: true
-          artifacts: "bin/packages/${{ matrix.arch }}/packages_ci/*.ipk"
+          artifacts: "${{ matrix.sdk }}-${{ matrix.arch }}.tar.gz"
