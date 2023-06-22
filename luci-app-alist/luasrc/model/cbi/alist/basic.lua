@@ -49,6 +49,7 @@ o:depends("mysql", "1")
 
 o = s:option(Value,"mysql_password", translate("MySQL Password"))
 o.datatype = "string"
+o.password = true
 o:depends("mysql", "1")
 
 o = s:option(Value,"mysql_database", translate("Database Name"))
