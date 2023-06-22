@@ -52,6 +52,10 @@ o.datatype = "and(uinteger,min(0))"
 o.default = "0"
 o.rmempty = false
 
+o = s:option(Value, "data_dir", translate("Data directory"))
+o.datatype = "string"
+o.default = "/etc/alist"
+
 o = s:option(Value, "temp_dir", translate("Cache directory"))
 o.datatype = "string"
 o.default = "/tmp/alist"

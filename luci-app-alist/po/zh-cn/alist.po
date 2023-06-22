@@ -34,6 +34,9 @@ msgstr "SSL 密钥"
 msgid "SSL key file path"
 msgstr "SSL 密钥文件路径"
 
+msgid "Data directory"
+msgstr "数据目录"
+
 msgid "Cache directory"
 msgstr "缓存目录"
 
