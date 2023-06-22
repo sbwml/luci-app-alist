@@ -59,7 +59,7 @@ start_service() {
 	config_load alist
 	config_foreach get_config alist
 	[ $enabled != 1 ] && return 1
-	mkdir -p $temp_dir
+	mkdir -p $temp_dir $data_dir
 	[ "$ssl" -eq 1 ] && SSL=true || SSL=false
 	[ "$log" -eq 1 ] && LOG=true || LOG=false
 	if [ -e /proc/uptime ]; then
