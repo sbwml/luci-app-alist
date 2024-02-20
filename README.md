@@ -17,6 +17,11 @@ A file list program that supports multiple storage.
     sudo yum install fuse-devel
     ```
 
+  - arch:
+    ```shell
+    sudo pacman -S fuse2
+    ```
+
 - Enter in your openwrt dir
 
 - Openwrt official SnapShots
