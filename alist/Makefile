@@ -26,7 +26,7 @@ define Download/$(PKG_NAME)-web
   HASH:=04e160efc6e7169103cd424a39de0f1720e769aacc49dc0a2fcc3f1fcc6d0fee
 endef
 
-PKG_BUILD_DEPENDS:=golang/host
+PKG_BUILD_DEPENDS:=golang/host upx/host
 PKG_BUILD_PARALLEL:=1
 PKG_USE_MIPS16:=0
 PKG_BUILD_FLAGS:=no-mips16
@@ -68,6 +68,7 @@ define Package/$(PKG_NAME)/install
 	$(call GoPackage/Package/Install/Bin,$(PKG_INSTALL_DIR))
 	$(INSTALL_DIR) $(1)/usr/bin
 	$(INSTALL_BIN) $(PKG_INSTALL_DIR)/usr/bin/alist $(1)/usr/bin
+	$(STAGING_DIR_HOST)/bin/upx --lzma --best $(1)/usr/bin/alist
 endef
 
 $(eval $(call BuildPackage,$(PKG_NAME)))
