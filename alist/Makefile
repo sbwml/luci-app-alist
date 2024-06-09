@@ -76,6 +76,7 @@ endif
 define Build/Prepare
 	$(call Build/Prepare/Default)
 	$(TAR) --strip-components=1 -C $(PKG_BUILD_DIR)/public/dist -xzf $(DL_DIR)/$(PKG_NAME)-web-$(PKG_WEB_VERSION).tar.gz
+	$(SED) 's_https://jsd.nn.ci/gh/alist-org/logo@main/logo.png_/assets/logo.png_g' $(PKG_BUILD_DIR)/public/dist/index.html
 ifneq ($(CONFIG_ARCH_64BIT),y)
 	$(RM) -rf $(PKG_BUILD_DIR)/drivers/{lark,lark.go}
 endif
