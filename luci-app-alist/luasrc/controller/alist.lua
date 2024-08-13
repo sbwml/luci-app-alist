@@ -33,11 +33,11 @@ function alist_status()
 end
 
 function get_log()
-	luci.http.write(luci.sys.exec("cat $(uci -q get alist.@alist[0].temp_dir)/alist.log"))
+	luci.http.write(luci.sys.exec("cat /var/log/alist.log"))
 end
 
 function clear_log()
-	luci.sys.call("cat /dev/null > $(uci -q get alist.@alist[0].temp_dir)/alist.log")
+	luci.sys.call("cat /dev/null > /var/log/alist.log")
 end
 
 function admin_info()
