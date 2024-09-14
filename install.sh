@@ -15,10 +15,10 @@ else
 	exit 1
 fi
 
-# check
+# check luci
 if [ ! -d "/usr/share/luci/menu.d" ]; then
-	echo -e "${RED_COLOR}OpenWrt LuCI version is not supports.${RES}"
-	echo -e "${RED_COLOR}Minimum OpenWrt Version: openwrt-21.02 or latest${RES}"
+	echo -e "${RED_COLOR}OpenWrt LuCI version is not support JavaScript.${RES}"
+	echo -e "${RED_COLOR}Minimum OpenWrt Version (openwrt.org): openwrt-21.02 or latest.${RES}"
 	exit 1
 fi
 
@@ -31,7 +31,7 @@ country_code=$(echo $ip_info | sed -r 's/.*country_code":"([^"]*).*/\1/')
 if [ $country_code = "CN" ]; then
 	google_status=$(curl -I -4 -m 3 -o /dev/null -s -w %{http_code} http://www.google.com/generate_204)
 	if [ ! $google_status = "204" ];then
-		mirror="https://mirror.ghproxy.com/"
+		mirror="https://ghp.ci/"
 	fi
 fi
 
