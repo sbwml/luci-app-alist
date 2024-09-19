@@ -16,10 +16,10 @@ else
 fi
 
 # check luci
-if [ ! -d "/usr/share/luci/menu.d" ]; then
-	echo -e "${RED_COLOR}OpenWrt LuCI version is not support JavaScript.${RES}"
-	echo -e "${RED_COLOR}Minimum OpenWrt Version (openwrt.org): openwrt-21.02 or latest.${RES}"
-	exit 1
+if [ -d "/usr/share/luci/menu.d" ]; then
+	luci=js
+else
+	luci=lua
 fi
 
 # temp
@@ -51,13 +51,24 @@ CHECK() (
 	fi
 )
 
+INSTALL_DEPEND() (
+	opkg update
+	opkg install luci-compat
+)
+
 DOWNLOAD() (
 	echo -e "\n${GREEN_COLOR}Download "$mirror"https://github.com/sbwml/luci-app-alist/releases/latest/download/openwrt-$sdk-$platform.tar.gz ...${RES}\n"
-	curl --connect-timeout 30 -m 600 -kLo "$temp_dir/openwrt-$sdk-$platform.tar.gz" "$mirror"https://github.com/sbwml/luci-app-alist/releases/latest/download/openwrt-$sdk-$platform.tar.gz
+	curl --connect-timeout 5 -m 300 -kLo "$temp_dir/openwrt-$sdk-$platform.tar.gz" "$mirror"https://github.com/sbwml/luci-app-alist/releases/latest/download/openwrt-$sdk-$platform.tar.gz
 	if [ $? -ne 0 ]; then
 		echo -e "\n${RED_COLOR}Error! Download openwrt-$sdk-$platform.tar.gz failed.${RES}"
 		rm -rf $temp_dir
 		exit 1
+	fi
+	if [ "$luci" = lua ]; then
+		echo -e "\n${GREEN_COLOR}Download "$mirror"https://github.com/sbwml/luci-app-alist/releases/download/v3.35.0/luci-app-alist_1.0.13_all.ipk ...${RES}\n"
+		curl --connect-timeout 5 -m 120 -kLo "$temp_dir/luci-app-alist.ipk" "$mirror"https://github.com/sbwml/luci-app-alist/releases/download/v3.35.0/luci-app-alist_1.0.13_all.ipk
+		echo -e "\n${GREEN_COLOR}Download "$mirror"https://github.com/sbwml/luci-app-alist/releases/download/v3.35.0/luci-i18n-alist-zh-cn_git-24.094.59741-2930a1c_all.ipk ...${RES}\n"
+		curl --connect-timeout 5 -m 120 -kLo "$temp_dir/luci-i18n-alist-zh-cn.ipk" "$mirror"https://github.com/sbwml/luci-app-alist/releases/download/v3.35.0/luci-i18n-alist-zh-cn_git-24.094.59741-2930a1c_all.ipk
 	fi
 )
 
@@ -65,10 +76,17 @@ INSTALL() (
 	echo -e "\n${GREEN_COLOR}Install Packages ...${RES}\n"
 	tar -zxf $temp_dir/openwrt-$sdk-$platform.tar.gz -C $temp_dir/
 	opkg install $temp_dir/packages_ci/alist*.ipk
-	opkg install $temp_dir/packages_ci/luci-app-alist*.ipk
-	opkg install $temp_dir/packages_ci/luci-i18n*.ipk
+	if [ "$luci" = lua ]; then
+		opkg install $temp_dir/luci-app-alist.ipk
+		opkg install $temp_dir/luci-i18n-alist-zh-cn.ipk
+	else
+		opkg install $temp_dir/packages_ci/luci-app-alist*.ipk
+		opkg install $temp_dir/packages_ci/luci-i18n*.ipk
+	fi
 	rm -rf $temp_dir /tmp/luci-*
 	echo -e "\n${GREEN_COLOR}Done!${RES}\n"
 )
 
-CHECK && DOWNLOAD && INSTALL
+CHECK
+[ "$luci" = lua ] && INSTALL_DEPEND
+DOWNLOAD && INSTALL
