@@ -120,6 +120,7 @@ start_service() {
 
 	set_firewall
 	config_get log_name $1 log_name "/var/log/alist.log"
+	log_base_dir=$(dirname "$log_name")
 	mkdir -p "$log_base_dir"
 	touch "$log_name"
 	chmod 766 "$log_name"
