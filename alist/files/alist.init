@@ -24,7 +24,7 @@ get_config() {
 
 	# log
 	config_get log $1 log 1
-  config_get log_name $1 log_name "/var/log/alist.log"
+	config_get log_name $1 log_name "/var/log/alist.log"
 	config_get log_max_size $1 log_max_size 10
 	config_get log_max_backups $1 log_max_backups 5
 	config_get log_max_age $1 log_max_age 28
@@ -119,7 +119,7 @@ start_service() {
 	fi
 
 	set_firewall
-  config_get log_name $1 log_name "/var/log/alist.log"
+	config_get log_name $1 log_name "/var/log/alist.log"
 	mkdir -p "$log_base_dir"
 	touch "$log_name"
 	chmod 766 "$log_name"

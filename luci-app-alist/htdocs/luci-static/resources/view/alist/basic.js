@@ -117,7 +117,7 @@ return view.extend({
 		o.rmempty = false;
 
 		o = s.option(form.Button, '_newpassword', _('Reset Password'),
-				_('Generate a new random password.'));
+			_('Generate a new random password.'));
 		o.inputtitle = _('Reset Password');
 		o.inputstyle = 'apply';
 		o.onclick = L.bind(this.handleResetPassword, this, data);
@@ -127,12 +127,12 @@ return view.extend({
 		s.anonymous = true;
 
 		o = s.option(form.Flag, 'force', _('Force read config'),
-				_('Setting this to true will force the program to read the configuration file, ignoring environment variables.'));
+			_('Setting this to true will force the program to read the configuration file, ignoring environment variables.'));
 		o.default = true;
 		o.rmempty = false;
 
 		o = s.option(form.Value, 'site_url', _('Site URL'),
-				_('When the web is reverse proxied to a subdirectory, this option must be filled out to ensure proper functioning of the web. Do not include \'/\' at the end of the URL'));
+			_('When the web is reverse proxied to a subdirectory, this option must be filled out to ensure proper functioning of the web. Do not include \'/\' at the end of the URL'));
 
 		o = s.option(form.Value, 'cdn', _('CDN URL'));
 		o.default = '';
@@ -146,7 +146,7 @@ return view.extend({
 		o.rmempty = false;
 
 		o = s.option(form.Value, 'max_connections', _('Max Connections'),
-				_('0 is unlimited, It is recommend to set a low number of concurrency (10-20) for poor performance device'));
+			_('0 is unlimited, It is recommend to set a low number of concurrency (10-20) for poor performance device'));
 		o.default = '0';
 		o.datatype = 'uinteger';
 		o.rmempty = false;
@@ -255,12 +255,12 @@ return view.extend({
 		o.depends('ssl', '1');
 
 		o = s.option(form.Value, 'ssl_cert', _('SSL cert'),
-				_('SSL certificate file path'));
+			_('SSL certificate file path'));
 		o.rmempty = false;
 		o.depends('ssl', '1');
 
 		o = s.option(form.Value, 'ssl_key', _('SSL key'),
-				_('SSL key file path'));
+			_('SSL key file path'));
 		o.rmempty = false;
 		o.depends('ssl', '1');
 
