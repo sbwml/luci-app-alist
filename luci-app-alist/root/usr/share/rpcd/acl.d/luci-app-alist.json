@@ -3,17 +3,10 @@
 		"description": "Grant UCI access for luci-app-alist",
 		"read": {
 			"file": {
-				"/usr/bin/alist": [ "exec" ],
-				"/var/log/alist.log": [ "read" ]
+				"/usr/bin/alist": [ "exec" ]
 			},
 			"ubus": {
 				"service": [ "list" ]
-			},
-			"uci": [ "alist" ]
-		},
-		"write": {
-			"file": {
-				"/var/log/alist.log": [ "write" ]
 			},
 			"uci": [ "alist" ]
 		}
