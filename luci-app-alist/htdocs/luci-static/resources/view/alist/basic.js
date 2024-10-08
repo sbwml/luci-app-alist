@@ -170,6 +170,11 @@ return view.extend({
 		o.default = 1;
 		o.rmempty = false;
 
+		o = s.option(form.Value, 'log_name', _('Log directory'));
+		o.default = '/var/log/alist.log';
+		o.rmempty = false;
+		o.depends('log', '1');
+
 		o = s.option(form.Value, 'log_max_size', _('Max Size'));
 		o.datatype = 'uinteger';
 		o.default = '10';
