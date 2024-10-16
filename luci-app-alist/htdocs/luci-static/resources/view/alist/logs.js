@@ -7,10 +7,15 @@
 var scrollPosition = 0;
 var userScrolled = false;
 var logTextarea;
+var logFilePath = '/var/log/alist.log';  // Default value, if UCI doesn't load
 
+// Load UCI configuration to get the log path
+uci.load('alist').then(function() {
+	logFilePath = uci.get('alist', '@alist[0]', 'log_name') || uci.get('alist-opkg', '@alist[0]', 'log_name') || '/var/log/alist.log';
+});
 function pollLog() {
 	return Promise.all([
-		fs.read_direct('/var/log/alist.log', 'text').then(function (res) {
+		fs.read_direct(logFilePath, 'text').then(function (res) {
 			return res.trim().split(/\n/).join('\n').replace(/\u001b\[33mWARN\u001b\[0m/g, '').replace(/\u001b\[36mINFO\u001b\[0m/g, '').replace(/\u001b\[31mERRO\u001b\[0m/g, '');
 		}),
 	]).then(function (data) {
@@ -26,7 +31,7 @@ function pollLog() {
 
 return view.extend({
 	handleCleanLogs: function () {
-		return fs.write('/var/log/alist.log', '')
+		return fs.write(logFilePath, '')
 			.catch(function (e) { ui.addNotification(null, E('p', e.message)) });
 	},
 
