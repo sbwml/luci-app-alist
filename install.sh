@@ -57,8 +57,8 @@ INSTALL_DEPEND() (
 )
 
 DOWNLOAD() (
-	echo -e "\n${GREEN_COLOR}Download "$mirror"https://github.com/sbwml/luci-app-alist/releases/latest/download/openwrt-$sdk-$platform.tar.gz ...${RES}\n"
-	curl --connect-timeout 5 -m 300 -kLo "$temp_dir/openwrt-$sdk-$platform.tar.gz" "$mirror"https://github.com/sbwml/luci-app-alist/releases/latest/download/openwrt-$sdk-$platform.tar.gz
+	echo -e "\n${GREEN_COLOR}Download "$mirror"https://github.com/ZYong9908/luci-app-alist/releases/latest/download/openwrt-$sdk-$platform.tar.gz ...${RES}\n"
+	curl --connect-timeout 5 -m 300 -kLo "$temp_dir/openwrt-$sdk-$platform.tar.gz" "$mirror"https://github.com/ZYong9908/luci-app-alist/releases/latest/download/openwrt-$sdk-$platform.tar.gz
 	if [ $? -ne 0 ]; then
 		echo -e "\n${RED_COLOR}Error! Download openwrt-$sdk-$platform.tar.gz failed.${RES}"
 		rm -rf $temp_dir
