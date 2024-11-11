@@ -53,7 +53,7 @@ A file list program that supports multiple storage.
 
 - Execute install script (Multi-architecture support)
   ```shell
-  sh -c "$(curl -ksS https://raw.githubusercontent.com/sbwml/luci-app-alist/main/install.sh)"
+  sh -c "$(curl -ksS https://raw.githubusercontent.com/ZYong9908/luci-app-alist/main/install.sh)"
   ```
 
 --------------
