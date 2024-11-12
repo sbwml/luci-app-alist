@@ -113,7 +113,7 @@ return view.extend({
 		o.default = '0';
 		o.rmempty = false;
 
-		o = s.option(form.Flag, 'allow_wan', _('Allow Access From Internet'));
+		o = s.option(form.Flag, 'allow_wan', _('Open firewall port'));
 		o.rmempty = false;
 
 		o = s.option(form.Button, '_newpassword', _('Reset Password'),
