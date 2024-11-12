@@ -3,6 +3,7 @@
 'require fs';
 'require poll';
 'require view';
+'require uci';
 
 var scrollPosition = 0;
 var userScrolled = false;
